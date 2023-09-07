@@ -40,7 +40,7 @@ jobs:
           # Used "set -ex" instead of hashbang since script isn't executed with hashbang
           set -ex
           trap "exit 1" ERR
-          ./compile.sh -t linux64 -j 4 -g -P ${{ matrix.pm-version-major }} -c ./download_cache -D
+          ./compile.sh -t android-aarch64 -x -j4 -P ${{ matrix.pm-version-major }} -c ./download_cache -D
 
       - name: Create tarball
         run: |
