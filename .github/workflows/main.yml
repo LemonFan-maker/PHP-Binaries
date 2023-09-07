@@ -34,7 +34,14 @@ jobs:
           path: ./download_cache
           key: compile-sh-cache-ssl-https-${{ hashFiles('./compile.sh') }}
           restore-keys: compile-sh-cache-ssl-https-
-
+      - name: Compile Musl
+        run: |
+          git clone https://github.com/LemonFan-maker/musl-cross-make.git
+          cd musl-cross-make
+          make
+          make install 
+          cd ..
+          
       - name: Compile PHP
         run: |
           # Used "set -ex" instead of hashbang since script isn't executed with hashbang
