@@ -36,14 +36,18 @@ jobs:
           restore-keys: compile-sh-cache-ssl-https-
       - name: Compile Musl
         run: |
-          git clone https://github.com/LemonFan-maker/musl-cross-make.git
-          cd musl-cross-make
+          wget https://musl.libc.org/releases/musl-1.2.4.tar.gz
+          tar -xvf musl-1.2.4.tar.gz
+          cd musl-1.2.4
+          ./configure
           make
           make install 
+          export PATH=$PATH:/usr/local/musl/bin/
           cd ..
           
       - name: Compile PHP
         run: |
+          export PATH=$PATH:/usr/local/musl/bin/
           # Used "set -ex" instead of hashbang since script isn't executed with hashbang
           set -ex
           trap "exit 1" ERR
