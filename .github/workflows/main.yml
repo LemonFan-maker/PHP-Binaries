@@ -3,13 +3,7 @@ name: Build PHP binaries
 on:
   push:
     branches: "**"
-    tags-ignore: "php-**"
-  pull_request:
   workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 
 jobs:
   linux:
@@ -36,23 +30,21 @@ jobs:
           restore-keys: compile-sh-cache-ssl-https-
       - name: Compile Musl
         run: |
-          wget https://musl.libc.org/releases/musl-1.2.4.tar.gz
-          tar -xvf musl-1.2.4.tar.gz
-          cd musl-1.2.4
-          ./configure
-          make
-          make install 
-          export PATH=$PATH:/usr/local/musl/bin/
-          cd ..
+          
           
       - name: Compile PHP
         run: |
-          export PATH=$PATH:/usr/local/musl/bin/
           # Used "set -ex" instead of hashbang since script isn't executed with hashbang
           set -ex
           trap "exit 1" ERR
-          ./compile.sh -t android-aarch64 -x -j4 -P ${{ matrix.pm-version-major }} -c ./download_cache -D
+          ./compile.sh -t android-aarch64 -x -j4 -s -P ${{ matrix.pm-version-major }} -c ./download_cache -D
+          
 
+      - name: Tree
+        run: |
+          sudo apt install tree
+          tree .
+          
       - name: Create tarball
         run: |
           tar -czf ./PHP-Linux-x86_64-PM${{ matrix.pm-version-major }}.tar.gz bin
