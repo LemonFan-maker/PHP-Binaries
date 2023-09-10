@@ -28,13 +28,15 @@ jobs:
           path: ./download_cache
           key: compile-sh-cache-ssl-https-${{ hashFiles('./compile.sh') }}
           restore-keys: compile-sh-cache-ssl-https-
-      - name:  Download Musl
+        
+      - name: Try Compile 
         run: |
-          aria2c -x 16 -s 32 https://github.com/LemonFan-maker/Compile_Musl_On_Action/releases/download/aarch-musl/musl-cross-make-aarch64.tgz
-          tar -xvf musl-cross-make-aarch64.tgz > /dev/null
-          ls
+          git clone https://github.com/LemonFan-maker/musl-cross-make.git
           cd musl-cross-make
+          make
+          make
           sudo make install
+          cd ..
           
       - name: Compile PHP
         run: |
@@ -42,6 +44,7 @@ jobs:
           set -ex
           trap "exit 1" ERR
           ./compile.sh -t android-aarch64 -x -j4 -s -P ${{ matrix.pm-version-major }} -c ./download_cache -D
+          sudo rm -rf musl-cross-make
           
       - name: Tree
         run: |
