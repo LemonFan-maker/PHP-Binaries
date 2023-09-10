@@ -19,7 +19,7 @@ jobs:
       - name: Install tools and dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install make autoconf automake libtool libtool-bin m4 wget libc-bin gzip bzip2 bison g++ git re2c
+          sudo apt-get install make aria2 autoconf automake libtool libtool-bin m4 wget libc-bin gzip bzip2 bison g++ git re2c
 
       - name: Prepare compile.sh download cache
         id: download-cache
@@ -28,9 +28,12 @@ jobs:
           path: ./download_cache
           key: compile-sh-cache-ssl-https-${{ hashFiles('./compile.sh') }}
           restore-keys: compile-sh-cache-ssl-https-
-      - name: Compile Musl
+      - name:  Download Musl
         run: |
-          
+          aria2c -x 16 -s 32 https://github.com/LemonFan-maker/Compile_Musl_On_Action/releases/download/aarch-musl/musl-cross-make-aarch64.tgz
+          tar -xvf musl-cross-make-aarch64.tgz > /dev/null
+          cd musl-cross-make-aarch64
+          sudo make install
           
       - name: Compile PHP
         run: |
@@ -39,7 +42,6 @@ jobs:
           trap "exit 1" ERR
           ./compile.sh -t android-aarch64 -x -j4 -s -P ${{ matrix.pm-version-major }} -c ./download_cache -D
           
-
       - name: Tree
         run: |
           sudo apt install tree
