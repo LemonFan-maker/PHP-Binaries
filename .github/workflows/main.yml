@@ -32,8 +32,9 @@ jobs:
         run: |
           aria2c -x 16 -s 32 https://github.com/LemonFan-maker/Compile_Musl_On_Action/releases/download/aarch-musl/musl-cross-make-aarch64.tgz
           tar -xvf musl-cross-make-aarch64.tgz > /dev/null
-          cd musl-cross-make-aarch64
-          sudo make install
+          ls
+        #  cd musl-cross-make-aarch64
+        #  sudo make install
           
       - name: Compile PHP
         run: |
